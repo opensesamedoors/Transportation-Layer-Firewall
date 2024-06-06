@@ -55,7 +55,7 @@ void printLine(int len) {
 }
 
 int showOneRule(struct IPRule rule) {
-	char saddr[25],daddr[25],sport[13],dport[13],proto[6],action[8],log[5];
+	char saddr[25],daddr[25],sport[13],dport[13],proto[6],action[10],log[5];
 	// ip
 	IPint2IPstr(rule.saddr,rule.smask,saddr);
 	IPint2IPstr(rule.daddr,rule.dmask,daddr);
@@ -143,7 +143,7 @@ int showNATRules(struct NATRecord *rules, int len) {
 
 int showOneLog(struct IPLog log) {
 	struct tm * timeinfo;
-	char saddr[25],daddr[25],proto[6],action[8],tm[21];
+	char saddr[25],daddr[25],proto[6],action[10],tm[21];
 	// ip
 	IPint2IPstrWithPort(log.saddr, log.sport, saddr);
 	IPint2IPstrWithPort(log.daddr, log.dport, daddr);
