@@ -90,15 +90,16 @@ struct KernelResponseHeader {
 #define NAT_TYPE_SRC 1
 #define NAT_TYPE_DEST 2
 
-// ----- netlink 相关 -----
+// ----- netlink -----
 #include <linux/netlink.h>
 
-// netlink 协议号
+// netlink protocol number
 #define NETLINK_MYFW 17
 
 struct sock *netlink_init(void);
 void netlink_release(void);
 int nlSend(unsigned int pid, void *data, unsigned int len);
+void nlRecv(struct sk_buff *skb);
 
 // ----- 应用交互相关 -------
 int dealAppMessage(unsigned int pid, void *msg, unsigned int len);

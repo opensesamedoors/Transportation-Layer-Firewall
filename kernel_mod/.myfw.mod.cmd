@@ -1,0 +1,1 @@
+savedcmd_/home/juju/桌面/RJFireWall/kernel_mod/myfw.mod := printf '%s\n'   tools.o helpers/netlink_helper.o helpers/log_helper.o helpers/rule_helper.o helpers/conn_helper.o helpers/nat_helper.o helpers/app_helper.o hooks/hook_main.o hooks/hook_nat.o mod_main.o | awk '!x[$$0]++ { print("/home/juju/桌面/RJFireWall/kernel_mod/"$$0) }' > /home/juju/桌面/RJFireWall/kernel_mod/myfw.mod
