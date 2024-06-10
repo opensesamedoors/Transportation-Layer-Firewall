@@ -117,6 +117,8 @@ void* formAllNATRules(unsigned int *len);
 #define MAX_LOG_LEN 1000
 
 struct IPRule matchIPRules(struct sk_buff *skb, int *isMatch);
+
+int rollLog(void);
 int addLog(struct IPLog log);
 int addLogBySKB(unsigned int action, struct sk_buff *skb);
 

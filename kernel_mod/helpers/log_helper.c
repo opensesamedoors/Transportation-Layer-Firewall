@@ -67,12 +67,10 @@ int addLogBySKB(unsigned int action, struct sk_buff *skb) {
     struct IPLog log;
     unsigned short sport,dport;
 	struct iphdr *header;
-    struct timeval now = {
-        .tv_sec = 0,
-        .tv_usec = 0
-    };
-    do_gettimeofday(&now);
-    log.tm = now.tv_sec;
+    
+    ktime_t now;
+    now = ktime_get();
+    log.tm = now;
     header = ip_hdr(skb);
 	getPort(skb,header,&sport,&dport);
     log.saddr = ntohl(header->saddr);
