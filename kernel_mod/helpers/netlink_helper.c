@@ -3,7 +3,7 @@
 static struct sock *nlsk = NULL;
 
 int nlSend(unsigned int pid, void *data, unsigned int len) {
-	int retval;
+        int retval;
 	struct nlmsghdr *nlh;
 	struct sk_buff *skb;
 	// init sk_buff
@@ -51,7 +51,7 @@ struct netlink_kernel_cfg nltest_cfg = {
 	.cb_mutex = NULL,
 	.bind = NULL,
 	.unbind = NULL,
-	.compare = NULL,
+	.release = NULL,
 };
 
 struct sock *netlink_init() {

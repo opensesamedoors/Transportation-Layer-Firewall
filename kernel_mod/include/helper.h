@@ -18,10 +18,10 @@
 
 #define RSP_Only_Head 10
 #define RSP_MSG 11
-#define RSP_IPRules 12  // body为IPRule[]
-#define RSP_IPLogs 13   // body为IPlog[]
-#define RSP_NATRules 14 // body为NATRecord[]
-#define RSP_ConnLogs 15 // body为ConnLog[]
+#define RSP_IPRules 12  // body is IPRule[]
+#define RSP_IPLogs 13   // body is IPlog[]
+#define RSP_NATRules 14 // body is NATRecord[]
+#define RSP_ConnLogs 15 // body is ConnLog[]
 
 struct IPRule {
     char name[MAXRuleNameLen+1];
