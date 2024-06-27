@@ -13,7 +13,6 @@
 #include <linux/netfilter.h>
 #include <linux/netlink.h>
 
-// ---- APP 与 Kernel 通用协议 ------
 #define MAXRuleNameLen 11
 
 #define REQ_GETAllIPRules 1
@@ -28,10 +27,10 @@
 
 #define RSP_Only_Head 10
 #define RSP_MSG 11
-#define RSP_IPRules 12  // body为IPRule[]
-#define RSP_IPLogs 13   // body为IPlog[]
-#define RSP_NATRules 14 // body为NATRecord[]
-#define RSP_ConnLogs 15 // body为ConnLog[]
+#define RSP_IPRules 12 
+#define RSP_IPLogs 13 
+#define RSP_NATRules 14 
+#define RSP_ConnLogs 15 
 
 struct IPRule {
     char name[MAXRuleNameLen+1];
@@ -39,8 +38,8 @@ struct IPRule {
     unsigned int smask;
     unsigned int daddr;
     unsigned int dmask;
-    unsigned int sport; // 源端口范围 高2字节为最小 低2字节为最大
-    unsigned int dport; // 目的端口范围 同上
+    unsigned int sport;
+    unsigned int dport;
     u_int8_t protocol;
     unsigned int action;
     unsigned int log;
@@ -59,14 +58,14 @@ struct IPLog {
     struct IPLog* nx;
 };
 
-struct NATRecord { // NAT 记录 or 规则(源IP端口转换)
-    unsigned int saddr; // 记录：原始IP | 规则：原始源IP
-    unsigned int smask; // 记录：无作用  | 规则：原始源IP掩码
-    unsigned int daddr; // 记录：转换后的IP | 规则：NAT 源IP
+struct NATRecord { 
+    unsigned int saddr;
+    unsigned int smask;
+    unsigned int daddr;
 
-    unsigned short sport; // 记录：原始端口 | 规则：最小端口范围
-    unsigned short dport; // 记录：转换后的端口 | 规则：最大端口范围
-    unsigned short nowPort; // 记录：当前使用端口 | 规则：无作用
+    unsigned short sport;
+    unsigned short dport;
+    unsigned short nowPort;
     struct NATRecord* nx;
 };
 
@@ -77,7 +76,7 @@ struct ConnLog {
     unsigned short dport;
     u_int8_t protocol;
     int natType;
-    struct NATRecord nat; // NAT记录
+    struct NATRecord nat;
 };
 
 struct APPRequest {
@@ -100,14 +99,14 @@ struct KernelResponseHeader {
 #define NAT_TYPE_SRC 1
 #define NAT_TYPE_DEST 2
 
-// ----- 上层应用专用 ------
+
 #define uint8_t unsigned char
 #define NETLINK_MYFW 17
 #define MAX_PAYLOAD (1024 * 256)
 
 #define ERROR_CODE_EXIT -1
-#define ERROR_CODE_EXCHANGE -2 // 与内核交换信息失败
-#define ERROR_CODE_WRONG_IP -11 // 错误的IP格式
+#define ERROR_CODE_EXCHANGE -2 
+#define ERROR_CODE_WRONG_IP -11 
 #define ERROR_CODE_NO_SUCH_RULE -12
 
 /** 

@@ -1,16 +1,16 @@
 #include "common.h"
 
 int IPstr2IPint(const char *ipStr, unsigned int *ip, unsigned int *mask){
-	// init
-	int p = -1, count = 0;
-	unsigned int len = 0, tmp = 0, r_mask = 0, r_ip = 0,i;
-	for(i = 0; i < strlen(ipStr); i++){
-		if(!(ipStr[i]>='0' && ipStr[i]<='9') && ipStr[i]!='.' && ipStr[i]!='/') {
-			return -1;
-		}
+    int p = -1, count = 0;
+    unsigned int len = 0, tmp = 0, r_mask = 0, r_ip = 0, i;
+    for(i = 0; i < strlen(ipStr); i++){
+    	if(!(ipStr[i]>='0' && ipStr[i]<='9') && ipStr[i]!='.' && ipStr[i]!='/') {
+	    return -1;
 	}
-	// 获取掩码
-	for(i = 0; i < strlen(ipStr); i++){
+    }
+    
+    // get mask
+    for(i = 0; i < strlen(ipStr); i++){
         if(p != -1){
             len *= 10;
             len += ipStr[i] - '0';
@@ -18,15 +18,16 @@ int IPstr2IPint(const char *ipStr, unsigned int *ip, unsigned int *mask){
         else if(ipStr[i] == '/')
             p = i;
     }
-	if(len > 32 || (p>=0 && p<7)) {
-		return -1;
-	}
+    if(len > 32 || (p>=0 && p<7)) {
+    	return -1;
+    }
     if(p != -1){
         if(len)
             r_mask = 0xFFFFFFFF << (32 - len);
     }
     else r_mask = 0xFFFFFFFF;
-	// 获取IP
+    
+    // get IP
     for(i = 0; i < (p>=0 ? p : strlen(ipStr)); i++){
         if(ipStr[i] == '.'){
             r_ip = r_ip | (tmp << (8 * (3 - count)));
@@ -36,12 +37,14 @@ int IPstr2IPint(const char *ipStr, unsigned int *ip, unsigned int *mask){
         }
         tmp *= 10;
         tmp += ipStr[i] - '0';
-		if(tmp>256 || count>3)
-			return -2;
+	if(tmp > 256 || count > 3)
+	    return -2;
     }
+    
     r_ip = r_ip | tmp;
-	*ip = r_ip;
-	*mask = r_mask;
+    *ip = r_ip;
+    *mask = r_mask;
+    
     return 0;
 }
 

@@ -38,6 +38,7 @@ int dealAppMessage(unsigned int pid, void *msg, unsigned int len) {
     struct KernelResponseHeader *rspH;
     void* mem;
     unsigned int rspLen = 0;
+    
     req = (struct APPRequest *) msg;
     switch (req->tp)
     {

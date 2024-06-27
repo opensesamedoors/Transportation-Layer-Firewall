@@ -1,33 +1,37 @@
 #include "common.h"
 
-struct KernelResponse addFilterRule(char *after,char *name,char *sip,char *dip,unsigned int sport,unsigned int dport,u_int8_t proto,unsigned int log,unsigned int action) {
-	struct APPRequest req;
+struct KernelResponse addFilterRule(char *after,char *name,char *sip,char *dip,unsigned int sport,unsigned int dport,u_int8_t proto,unsigned int log,unsigned int action)
+{
+    struct APPRequest req;
     struct KernelResponse rsp;
-	// form rule
-	struct IPRule rule;
-	if(IPstr2IPint(sip,&rule.saddr,&rule.smask)!=0) {
-		rsp.code = ERROR_CODE_WRONG_IP;
-		return rsp;
-	}
-	if(IPstr2IPint(dip,&rule.daddr,&rule.dmask)!=0) {
-		rsp.code = ERROR_CODE_WRONG_IP;
-		return rsp;
-	}
-	rule.saddr = rule.saddr;
-	rule.daddr = rule.daddr;
-	rule.sport = sport;
-	rule.dport = dport;
-	rule.log = log;
-	rule.action = action;
-	rule.protocol = proto;
-	strncpy(rule.name, name, MAXRuleNameLen);
-	// form req
-	req.tp = REQ_ADDIPRule;
-	req.ruleName[0]=0;
-	strncpy(req.ruleName, after, MAXRuleNameLen);
-	req.msg.ipRule = rule;
-	// exchange
-	return exchangeMsgK(&req, sizeof(req));
+    
+    // form rule
+    struct IPRule rule;
+    if(IPstr2IPint(sip,&rule.saddr,&rule.smask)!=0) {
+    	rsp.code = ERROR_CODE_WRONG_IP;
+    	return rsp;
+    }
+    if(IPstr2IPint(dip,&rule.daddr,&rule.dmask)!=0) {
+    	rsp.code = ERROR_CODE_WRONG_IP;
+    	return rsp;
+    }
+    rule.saddr = rule.saddr;
+    rule.daddr = rule.daddr;
+    rule.sport = sport;
+    rule.dport = dport;
+    rule.log = log;
+    rule.action = action;
+    rule.protocol = proto;
+    strncpy(rule.name, name, MAXRuleNameLen);
+    
+    // form req
+    req.tp = REQ_ADDIPRule;
+    req.ruleName[0] = 0;
+    strncpy(req.ruleName, after, MAXRuleNameLen);
+    req.msg.ipRule = rule;
+    
+    // exchange
+    return exchangeMsgK(&req, sizeof(req));
 }
 
 struct KernelResponse delFilterRule(char *name) {

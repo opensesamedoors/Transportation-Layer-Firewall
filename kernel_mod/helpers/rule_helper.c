@@ -4,7 +4,6 @@
 static struct IPRule *ipRuleHead = NULL;
 static DEFINE_RWLOCK(ipRuleLock);
 
-// 在名称为after的规则后新增一条规则，after为空时则在首部新增一条规则
 struct IPRule * addIPRuleToChain(char after[], struct IPRule rule) {
     struct IPRule *newRule,*now;
     newRule = (struct IPRule *) kzalloc(sizeof(struct IPRule), GFP_KERNEL);
@@ -13,37 +12,37 @@ struct IPRule * addIPRuleToChain(char after[], struct IPRule rule) {
         return NULL;
     }
     memcpy(newRule, &rule, sizeof(struct IPRule));
-    // 新增规则至规则链表
+    
+    // add rule
     write_lock(&ipRuleLock);
     if(rule.action != NF_ACCEPT) 
-        eraseConnRelated(rule); // 消除新增规则的影响
+        eraseConnRelated(rule);
     if(ipRuleHead == NULL) {
         ipRuleHead = newRule;
         ipRuleHead->nx = NULL;
         write_unlock(&ipRuleLock);
         return newRule;
     }
-    if(strlen(after)==0) {
+    if(strlen(after) == 0) {
         newRule->nx = ipRuleHead;
         ipRuleHead = newRule;
         write_unlock(&ipRuleLock);
         return newRule;
     }
-    for(now=ipRuleHead;now!=NULL;now=now->nx) {
-        if(strcmp(now->name, after)==0) {
+    for(now = ipRuleHead; now != NULL; now = now->nx) {
+        if(strcmp(now->name, after) == 0) {
             newRule->nx = now->nx;
             now->nx = newRule;
             write_unlock(&ipRuleLock);
             return newRule;
         }
     }
-    // 添加失败
+
     write_unlock(&ipRuleLock);
     kfree(newRule);
     return NULL;
 }
 
-// 删除所有名称为name的规则
 int delIPRuleFromChain(char name[]) {
     struct IPRule *now,*tmp;
     int count = 0;
@@ -51,7 +50,7 @@ int delIPRuleFromChain(char name[]) {
     while(ipRuleHead!=NULL && strcmp(ipRuleHead->name,name)==0) {
         tmp = ipRuleHead;
         ipRuleHead = ipRuleHead->nx;
-        eraseConnRelated(*tmp); // 消除删除规则的影响
+        eraseConnRelated(*tmp);
         kfree(tmp);
         count++;
     }
