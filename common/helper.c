@@ -7,16 +7,15 @@ struct KernelResponse addFilterRule(char *after,char *name,char *sip,char *dip,u
     
     // form rule
     struct IPRule rule;
-    if(IPstr2IPint(sip,&rule.saddr,&rule.smask)!=0) {
+    if(IPstr2IPint(sip, &rule.saddr, &rule.smask) != 0) {
     	rsp.code = ERROR_CODE_WRONG_IP;
     	return rsp;
     }
-    if(IPstr2IPint(dip,&rule.daddr,&rule.dmask)!=0) {
+    if(IPstr2IPint(dip, &rule.daddr, &rule.dmask) != 0) {
     	rsp.code = ERROR_CODE_WRONG_IP;
     	return rsp;
     }
-    rule.saddr = rule.saddr;
-    rule.daddr = rule.daddr;
+    
     rule.sport = sport;
     rule.dport = dport;
     rule.log = log;

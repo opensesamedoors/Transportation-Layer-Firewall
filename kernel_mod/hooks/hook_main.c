@@ -27,7 +27,7 @@ unsigned int hook_main(void *priv,struct sk_buff *skb,const struct nf_hook_state
     rule = matchIPRules(skb, &isMatch);
     if(isMatch) {
         printk(KERN_DEBUG "[fw netfilter] patch rule %s.\n", rule.name);
-        action = (rule.action==NF_ACCEPT) ? NF_ACCEPT : NF_DROP;
+        action = (rule.action == NF_ACCEPT) ? NF_ACCEPT : NF_DROP;
         if(rule.log) {
             isLog = 1;
             addLogBySKB(action, skb);
