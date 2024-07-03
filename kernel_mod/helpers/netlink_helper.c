@@ -3,23 +3,27 @@
 static struct sock *nlsk = NULL;
 
 int nlSend(unsigned int pid, void *data, unsigned int len) {
-        int retval;
-	struct nlmsghdr *nlh;
-	struct sk_buff *skb;
-	// init sk_buff
-	skb = nlmsg_new(len, GFP_ATOMIC);
-	if (skb == NULL) {
-		printk(KERN_WARNING "[fw netlink] alloc reply nlmsg skb failed!\n");
-		return -1;
-	}
-	nlh = nlmsg_put(skb, 0, 0, 0, NLMSG_SPACE(len) - NLMSG_HDRLEN, 0);
-	// send data
-	memcpy(NLMSG_DATA(nlh), data, len);
-        //NETLINK_CB(skb).portid = 0;
-	NETLINK_CB(skb).dst_group = 0;
-	retval = netlink_unicast(nlsk, skb, pid, MSG_DONTWAIT);
-	printk("[fw netlink] send to user pid=%d,len=%d,ret=%d\n", pid, nlh->nlmsg_len - NLMSG_SPACE(0), retval);
-	return retval;
+    int retval;
+    struct nlmsghdr *nlh;
+    struct sk_buff *skb;
+    
+    // init sk_buff
+    skb = nlmsg_new(len, GFP_ATOMIC);
+    if (skb == NULL) {
+    	printk(KERN_WARNING "[fw netlink] alloc reply nlmsg skb failed!\n");
+    	return -1;
+    }
+    nlh = nlmsg_put(skb, 0, 0, 0, NLMSG_SPACE(len) - NLMSG_HDRLEN, 0);
+    
+    // send data
+    memcpy(NLMSG_DATA(nlh), data, len);
+    
+    //NETLINK_CB(skb).portid = 0;
+    NETLINK_CB(skb).dst_group = 0;
+    retval = netlink_unicast(nlsk, skb, pid, MSG_DONTWAIT);
+    printk("[fw netlink] send to user pid=%d,len=%d,ret=%d\n", pid, nlh->nlmsg_len - NLMSG_SPACE(0), retval);
+    
+    return retval;
 }
 
 void nlRecv(struct sk_buff *skb) {
@@ -47,13 +51,13 @@ void nlRecv(struct sk_buff *skb) {
 }
 
 struct netlink_kernel_cfg nltest_cfg = {
-	.groups = 0,
-	.flags = 0,
-	.input = nlRecv,
-	.cb_mutex = NULL,
-	.bind = NULL,
-	.unbind = NULL,
-	.release = NULL,
+    .groups = 0,
+    .flags = 0,
+    .input = nlRecv,
+    .cb_mutex = NULL,
+    .bind = NULL,
+    .unbind = NULL,
+    .release = NULL,
 };
 
 struct sock *netlink_init() {

@@ -49,48 +49,57 @@ int IPstr2IPint(const char *ipStr, unsigned int *ip, unsigned int *mask){
 }
 
 int IPint2IPstr(unsigned int ip, unsigned int mask, char *ipStr) {
-    unsigned int i,ips[4],maskNum = 32;
-    if(ipStr == NULL) {
+    unsigned int i, ips[4], maskNum = 32;
+    if(ipStr == NULL) 
         return -1;
+
+    if(mask == 0)
+    	maskNum = 0;
+    else {
+    	while((mask & 1u) == 0) {
+            maskNum--;
+            mask >>= 1;
+        }
     }
-	if(mask == 0)
-		maskNum = 0;
-	else {
-		while((mask & 1u) == 0) {
-                	maskNum--;
-                	mask >>= 1;
-        	}
-	}
-    for(i=0;i<4;i++) {
+    
+    for(i=0; i<4; i++) {
         ips[i] = ((ip >> ((3-i)*8)) & 0xFFU);
     }
-	sprintf(ipStr, "%u.%u.%u.%u/%u", ips[0], ips[1], ips[2], ips[3], maskNum);
-	return 0;
+    
+    sprintf(ipStr, "%u.%u.%u.%u/%u", ips[0], ips[1], ips[2], ips[3], maskNum);
+    return 0;
 }
 
 int IPint2IPstrNoMask(unsigned int ip, char *ipStr) {
     unsigned int i,ips[4];
+    
     if(ipStr == NULL) {
         return -1;
     }
-    for(i=0;i<4;i++) {
+    
+    for(i=0; i<4; i++) {
         ips[i] = ((ip >> ((3-i)*8)) & 0xFFU);
     }
-	sprintf(ipStr, "%u.%u.%u.%u", ips[0], ips[1], ips[2], ips[3]);
-	return 0;
+    
+    sprintf(ipStr, "%u.%u.%u.%u", ips[0], ips[1], ips[2], ips[3]);
+    return 0;
 }
 
 int IPint2IPstrWithPort(unsigned int ip, unsigned short port, char *ipStr) {
+    unsigned int i,ips[4];
+    
     if(port == 0) {
         return IPint2IPstrNoMask(ip, ipStr);
     }
-    unsigned int i,ips[4];
+    
     if(ipStr == NULL) {
         return -1;
     }
-    for(i=0;i<4;i++) {
+    
+    for(i=0; i<4; i++) {
         ips[i] = ((ip >> ((3-i)*8)) & 0xFFU);
     }
-	sprintf(ipStr, "%u.%u.%u.%u:%u", ips[0], ips[1], ips[2], ips[3], port);
-	return 0;
+    
+    sprintf(ipStr, "%u.%u.%u.%u:%u", ips[0], ips[1], ips[2], ips[3], port);
+    return 0;
 }

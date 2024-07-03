@@ -6,18 +6,22 @@ int sendMsgToApp(unsigned int pid, const char *msg) {
     void* mem;
     unsigned int rspLen;
     struct KernelResponseHeader *rspH;
+    
     rspLen = sizeof(struct KernelResponseHeader) + strlen(msg) + 1;
     mem = kzalloc(rspLen, GFP_ATOMIC);
     if(mem == NULL) {
         printk(KERN_WARNING "[fw k2app] sendMsgToApp kzalloc fail.\n");
         return 0;
     }
+    
     rspH = (struct KernelResponseHeader *)mem;
     rspH->bodyTp = RSP_MSG;
     rspH->arrayLen = strlen(msg);
     memcpy(mem+sizeof(struct KernelResponseHeader), msg, strlen(msg));
+    
     nlSend(pid, mem, rspLen);
     kfree(mem);
+    
     return rspLen;
 }
 
@@ -28,7 +32,7 @@ void dealWithSetAction(unsigned int action) {
             .dmask = 0,
             .sport = -1,
             .dport = -1
-        }; // 清除全部连接
+        };
         eraseConnRelated(rule);
     }
 }

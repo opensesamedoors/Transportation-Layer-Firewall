@@ -109,9 +109,7 @@ struct KernelResponseHeader {
 #define ERROR_CODE_WRONG_IP -11 
 #define ERROR_CODE_NO_SUCH_RULE -12
 
-/** 
- * @brief 内核回应包
- */
+
 struct KernelResponse {
     int code; // <0 代表请求失败，失败码; >=0 代表body长度
     void *data; // 回应包指针，记得free
@@ -119,28 +117,21 @@ struct KernelResponse {
     void *body; // 不要free；指向data中的Body
 };
 
-/**
- * @brief 与内核交换数据
- * @param smsg: 发送的消息
- * @param slen: 发送消息的长度
- * @return KernelResponse: 接收到的回应，其中data字段记得free
- */
 struct KernelResponse exchangeMsgK(void *smsg, unsigned int slen);
 
-// ----- 与内核交互函数 -----
-
-struct KernelResponse addFilterRule(char *after,char *name,char *sip,char *dip,unsigned int sport,unsigned int dport,u_int8_t proto,unsigned int log,unsigned int action); // 新增一条过滤规则，其中，sport/dport为端口范围：高2字节为最小 低2字节为最大
+// ----- kernel interacion -----
+struct KernelResponse addFilterRule(char *after, char *name, char *sip, char *dip, unsigned int sport, unsigned int dport,
+                                    u_int8_t proto, unsigned int log, unsigned int action);
 struct KernelResponse delFilterRule(char *name);
 struct KernelResponse getAllFilterRules(void);
 struct KernelResponse addNATRule(char *sip,char *natIP,unsigned short minport,unsigned short maxport);
 struct KernelResponse delNATRule(int num);
 struct KernelResponse getAllNATRules(void);
 struct KernelResponse setDefaultAction(unsigned int action);
-struct KernelResponse getLogs(unsigned int num); // num=0时，获取所有日志
+struct KernelResponse getLogs(unsigned int num);
 struct KernelResponse getAllConns(void);
 
-// ----- 一些工具函数 ------
-
+// ----- tools ------
 int IPstr2IPint(const char *ipStr, unsigned int *ip, unsigned int *mask);
 int IPint2IPstr(unsigned int ip, unsigned int mask, char *ipStr);
 int IPint2IPstrNoMask(unsigned int ip, char *ipStr);

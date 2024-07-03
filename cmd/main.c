@@ -92,57 +92,65 @@ struct KernelResponse cmdAddRule() {
 }
 
 struct KernelResponse cmdAddNATRule() {
-	struct KernelResponse empty;
-	char saddr[25],daddr[25],port[15];
-	unsigned short portMin,portMax;
-	empty.code = ERROR_CODE_EXIT;
-	printf("ONLY source NAT is supported\n");
-	// 源IP
-	printf("source ip and mask [like 127.0.0.1/16]: ");
-	scanf("%s",saddr);
-	// NAT IP
-	printf("NAT ip [like 192.168.80.139]: ");
-	scanf("%s",daddr);
-	// 目的端口
-	printf("NAT port range [like 10000-30000 or any]: ");
-	scanf("%s",port);
-	if(strcmp(port, "any") == 0) {
-		portMin = 0,portMax = 0xFFFFu;
-	} else {
-		sscanf(port,"%hu-%hu",&portMin,&portMax);
-	}
-	if(portMin > portMax) {
-		printf("the min port > max port.\n");
-		return empty;
-	}
-	return addNATRule(saddr,daddr,portMin,portMax);
+    struct KernelResponse empty;
+    char saddr[25],daddr[25],port[15];
+    unsigned short portMin,portMax;
+    
+    empty.code = ERROR_CODE_EXIT;
+    printf("ONLY source NAT is supported\n");
+    
+    // source IP
+    printf("source ip and mask [like 127.0.0.1/16]: ");
+    scanf("%s",saddr);
+    
+    // NAT IP
+    printf("NAT ip [like 192.168.80.139]: ");
+    scanf("%s",daddr);
+    
+    // destination port
+    printf("NAT port range [like 10000-30000 or any]: ");
+    scanf("%s",port);
+    
+    if(strcmp(port, "any") == 0) {
+    	portMin = 0,portMax = 0xFFFFu;
+    } else {
+    	sscanf(port,"%hu-%hu",&portMin,&portMax);
+    }
+    if(portMin > portMax) {
+    	printf("the min port > max port.\n");
+    	return empty;
+    }
+    
+    return addNATRule(saddr,daddr,portMin,portMax);
 }
 
 void wrongCommand() {
-	printf("wrong command.\n");
-	printf("uapp <command> <sub-command> [option]\n");
-	printf("commands: rule <add | del | ls | default> [del rule's name]\n");
-	printf("          nat  <add | del | ls> [del number]\n");
-	printf("          ls   <rule | nat | log | connect>\n");
-	exit(0);
+    printf("wrong command.\n");
+    printf("uapp <command> <sub-command> [option]\n");
+    printf("commands: rule <add | del | ls | default> [del rule's name]\n");
+    printf("          nat  <add | del | ls> [del number]\n");
+    printf("          ls   <rule | nat | log | connect>\n");
+    
+    exit(0);
 }
 
 int main(int argc, char *argv[]) {
-	if(argc<3) {
-		//addRule("","rj","192.168.80.138","47.100.10.21",-1,-1,IPPROTO_ICMP,1,NF_DROP);
-		//addNATRule("192.168.60.2", "192.168.80.139",20000,35535);
-		wrongCommand();
-		return 0;
-	}
-	struct KernelResponse rsp;
-	rsp.code = ERROR_CODE_EXIT;
-	// 过滤规则相关
+    if(argc<3) {
+    	wrongCommand();
+    	return 0;
+    
+    }
+    
+    struct KernelResponse rsp;
+    rsp.code = ERROR_CODE_EXIT;
+    
+	// firewall rules
 	if(strcmp(argv[1], "rule")==0 || argv[1][0] == 'r') {
 		if(strcmp(argv[2], "ls")==0 || strcmp(argv[2], "list")==0) {
-		// 列出所有过滤规则
+		// ls
 			rsp = getAllFilterRules();
 		} else if(strcmp(argv[2], "del")==0) {
-		// 删除过滤规则
+		// del
 			if(argc < 4)
 				printf("Please point rule name in option.\n");
 			else if(strlen(argv[3])>MAXRuleNameLen)
@@ -150,10 +158,10 @@ int main(int argc, char *argv[]) {
 			else
 				rsp = delFilterRule(argv[3]);
 		} else if(strcmp(argv[2], "add")==0) {
-		// 添加过滤规则
+		// add
 			rsp = cmdAddRule();
 		} else if(strcmp(argv[2], "default")==0) {
-		// 设置默认规则
+		// set default
 			if(argc < 4)
 				printf("Please point default action in option.\n");
 			else if(strcmp(argv[3], "accept")==0)
@@ -166,10 +174,10 @@ int main(int argc, char *argv[]) {
 			wrongCommand();
 	} else if(strcmp(argv[1], "nat")==0 || argv[1][0] == 'n') {
 		if(strcmp(argv[2], "ls")==0 || strcmp(argv[2], "list")==0) {
-		// 列出所有NAT规则
+		// ls NAT
 			rsp = getAllNATRules();
 		} else if(strcmp(argv[2], "del")==0) {
-		// 删除NAT规则
+		// del NAT
 			if(argc < 4)
 				printf("Please point rule number(seq) in option.\n");
 			else {
@@ -178,31 +186,32 @@ int main(int argc, char *argv[]) {
 				rsp = delNATRule(num);
 			}
 		} else if(strcmp(argv[2], "add")==0) {
-		// 添加NAT规则
+		// add NAT
 			rsp = cmdAddNATRule();
 		} else {
 			wrongCommand();
 		}
 	} else if(strcmp(argv[1], "ls")==0 || argv[1][0] == 'l') {
-	// 展示相关
+	// show
 		if(strcmp(argv[2],"log")==0 || argv[2][0] == 'l') {
-		// 过滤日志
+		// log
 			unsigned int num = 0;
 			if(argc > 3)
 				sscanf(argv[3], "%u", &num);
 			rsp = getLogs(num);
 		} else if(strcmp(argv[2],"con")==0 || argv[2][0] == 'c') {
-		// 连接状态
+		// conn
 			rsp = getAllConns();
 		} else if(strcmp(argv[2],"rule")==0 || argv[2][0] == 'r') {
-		// 已有过滤规则
+		// firewall rule
 			rsp = getAllFilterRules();
 		} else if(strcmp(argv[2],"nat")==0 || argv[2][0] == 'n') {
-		// 已有NAT规则
+		// NAT rule
 			rsp = getAllNATRules();
 		} else
 			wrongCommand();
 	} else 
 		wrongCommand();
+		
 	dealResponseAtCmd(rsp);
 }
