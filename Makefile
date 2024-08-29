@@ -1,5 +1,4 @@
 SUBDIRS = cmd kernel_mod
-
 .PHONY:all install clean
 
 all:
